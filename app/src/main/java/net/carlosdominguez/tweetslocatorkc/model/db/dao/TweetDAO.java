@@ -90,7 +90,7 @@ public class TweetDAO {
      */
     public Cursor queryCursor() {
         Cursor c = db.getReadableDatabase().query(DBConstants.TWEETS_TABLE, DBConstants.TWEETS_ALL_COLUMNS, null, null, null, null, null);
-        db.close();
+     //   db.close();
         return c;
     }
 
@@ -126,7 +126,6 @@ public class TweetDAO {
             }
         }
         c.close();
-        db.close();
         return Tweet;
     }
 

@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static String sDatabaseName;
 
 
-    private static void configure(Context context, String databaseName) {
+    public static void configure(Context context, String databaseName) {
         sContext = new WeakReference<>(context);
         sDatabaseName = databaseName;
     }
