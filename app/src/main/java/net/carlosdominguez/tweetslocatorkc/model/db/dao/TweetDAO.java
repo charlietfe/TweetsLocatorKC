@@ -60,7 +60,7 @@ public class TweetDAO {
 
     public static ContentValues getContentValues(Tweet tweet) {
         ContentValues content = new ContentValues();
-        content.put(DBConstants.KEY_COLUMN_MESSAGE, tweet.getMessage());
+        content.put(DBConstants.KEY_COLUMN_MESSAGE, tweet.getText());
         content.put(DBConstants.KEY_COLUMN_USERNAME, tweet.getUsername());
 
         return content;

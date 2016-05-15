@@ -21,10 +21,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import net.carlosdominguez.tweetslocatorkc.R;
+import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
 import net.carlosdominguez.tweetslocatorkc.services.external.TwitterService;
 import net.carlosdominguez.tweetslocatorkc.utils.map.MapHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,13 +70,16 @@ public class TweetLocatorFragment extends SupportMapFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.tweet_locator_fragment_menu, menu);
 
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_item_search);
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_item_search);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 new SearchTweetsAsyncTask(query, map).execute();
+                searchView.setIconified(true);
+                searchView.clearFocus();
+                searchMenuItem.collapseActionView();
                 return true;
             }
 
@@ -123,7 +128,11 @@ public class TweetLocatorFragment extends SupportMapFragment {
                             Query query = new Query();
                             GeoLocation location = new GeoLocation(selectedLat, selectedLng);
                             query.geoCode(location, 100, Query.KILOMETERS.name());
-                            query.setCount(2000);
+                            query.setCount(20);
+
+                            // TODO: Maybe It could be a good idea to iterate to get
+                            // only tweets with geo
+
                             return twitter.search(query).getTweets();
                         }
                     }
@@ -148,8 +157,9 @@ public class TweetLocatorFragment extends SupportMapFragment {
                 Toast.makeText(getContext(), "Could not find any location", Toast.LENGTH_SHORT).show();
             }
             else {
+                List<Tweet> tweets = Tweet.tweetsFromStatuses(statuses, selectedLat, selectedLng);
                 MapHelper.centerMap(map, selectedLat, selectedLng);
-                MapHelper.addGeoTweetsToMap(statuses, map, getContext());
+                MapHelper.addGeoTweetsToMap(tweets, map, getContext());
             }
         }
     }

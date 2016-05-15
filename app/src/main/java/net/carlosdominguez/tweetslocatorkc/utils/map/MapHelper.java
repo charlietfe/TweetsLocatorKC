@@ -13,6 +13,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 
+import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -33,17 +35,14 @@ public class MapHelper {
 
 
 
-    public static void addGeoTweetsToMap(List<Status> tweets, final GoogleMap googleMap, final Context context) {
+    public static void addGeoTweetsToMap(List<Tweet> tweets, final GoogleMap googleMap, final Context context) {
         if (tweets == null || googleMap == null) {
             return;
         }
 
-        for (final Status tweet : tweets) {
-
-            if (tweet.getGeoLocation() == null) continue;
-
-            final LatLng position = new LatLng(tweet.getGeoLocation().getLatitude(), tweet.getGeoLocation().getLongitude());
-            final String profileImageUrl = tweet.getUser().getProfileImageURL();
+        for (final Tweet tweet : tweets) {
+            final LatLng position = new LatLng(tweet.getLat(), tweet.getLng());
+            final String profileImageUrl = tweet.getProfileImageURL();
 
             new Thread(new Runnable() {
                 @Override

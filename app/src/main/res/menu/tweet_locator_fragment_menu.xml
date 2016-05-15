@@ -7,8 +7,4 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/menu_item_clear"
-        android:title="Clear"
-        app:showAsAction="never"/>
-
 </menu>

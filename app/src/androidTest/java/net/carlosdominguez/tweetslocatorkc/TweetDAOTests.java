@@ -22,7 +22,7 @@ public class TweetDAOTests extends AndroidTestCase {
 
     public void testInsertTweet() {
         Tweet tweet = new Tweet();
-        tweet.setMessage("Hi from tweet");
+        tweet.setText("Hi from tweet");
         tweet.setUsername("atlanticasound");
 
         TweetDAO dao = new TweetDAO();
@@ -34,7 +34,7 @@ public class TweetDAOTests extends AndroidTestCase {
 
         Tweet tweet1 = dao.query(result);
 
-        assertEquals(tweet.getMessage(), tweet1.getMessage());
+        assertEquals(tweet.getText(), tweet1.getText());
         assertEquals(tweet.getUsername(), tweet1.getUsername());
 
         List<Tweet> tweets = dao.query();
@@ -46,7 +46,7 @@ public class TweetDAOTests extends AndroidTestCase {
         DBHelper.configure(getContext(), "TestDB.sqlite");
 
         Tweet tweet = new Tweet();
-        tweet.setMessage("Hi from tweet");
+        tweet.setText("Hi from tweet");
         tweet.setUsername("atlanticasound");
 
         TweetDAO dao = new TweetDAO();
