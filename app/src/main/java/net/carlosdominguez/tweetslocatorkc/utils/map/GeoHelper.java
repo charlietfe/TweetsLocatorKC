@@ -42,7 +42,8 @@ public class GeoHelper {
     public static GeoLocation generateRandomPoint(double lat, double lng, double radius) {
         double x0 = lng;
         double y0 = lat;
-        // Convert Radius from meters to degrees.
+
+        // Convert Radius from kilometers to degrees.
         double rd = (radius*1000)/111300;
 
         double u = Math.random();

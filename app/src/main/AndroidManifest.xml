@@ -19,7 +19,7 @@
         <meta-data android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyC7EUp1PinAPZFxFBqjs_kOywTTiPE52oY" />
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -7,4 +7,12 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/menu_item_loader"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/action_view_progress" />
+
 </menu>

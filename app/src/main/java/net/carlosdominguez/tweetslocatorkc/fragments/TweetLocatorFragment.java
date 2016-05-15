@@ -12,13 +12,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 
 import net.carlosdominguez.tweetslocatorkc.R;
 import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
@@ -27,7 +24,6 @@ import net.carlosdominguez.tweetslocatorkc.services.external.TwitterService;
 import net.carlosdominguez.tweetslocatorkc.utils.map.MapHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,6 +41,9 @@ public class TweetLocatorFragment extends SupportMapFragment {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
+    private MenuItem menuItemSearch;
+    private MenuItem menuItemActionProgressItem;
+
 
 
     @Override
@@ -61,10 +60,13 @@ public class TweetLocatorFragment extends SupportMapFragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
-                loadTweetsFromDB();
+                new LoadTweetsFromDBAsyncTask().execute();
             }
         });
+
     }
+
+
 
 
     @Override
@@ -72,8 +74,11 @@ public class TweetLocatorFragment extends SupportMapFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.tweet_locator_fragment_menu, menu);
 
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_item_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        menuItemSearch = menu.findItem(R.id.menu_item_search);
+        final SearchView searchView = (SearchView) menuItemSearch.getActionView();
+
+        menuItemActionProgressItem = menu.findItem(R.id.menu_item_loader);
+        // Extract the action-view from the menu item
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -81,7 +86,7 @@ public class TweetLocatorFragment extends SupportMapFragment {
                 new SearchTweetsAsyncTask(query, map).execute();
                 searchView.setIconified(true);
                 searchView.clearFocus();
-                searchMenuItem.collapseActionView();
+                menuItemSearch.collapseActionView();
                 return true;
             }
 
@@ -92,6 +97,8 @@ public class TweetLocatorFragment extends SupportMapFragment {
         });
     }
 
+
+    // Asynctasks
 
     public class SearchTweetsAsyncTask extends AsyncTask<Void, Void, List<Status>> {
         private final String TAG =  SearchTweetsAsyncTask.class.getSimpleName();
@@ -107,6 +114,7 @@ public class TweetLocatorFragment extends SupportMapFragment {
 
 
         public SearchTweetsAsyncTask(String locationName, GoogleMap map) {
+            showProgressBar();
             this.locationName = locationName;
             service = new TwitterService();
             twitter = service.getTwitter();
@@ -155,6 +163,7 @@ public class TweetLocatorFragment extends SupportMapFragment {
         @Override
         protected void onPostExecute(List<twitter4j.Status> statuses) {
             super.onPostExecute(statuses);
+            hideProgressBar();
             if (statuses == null) {
                 Toast.makeText(getContext(), "Could not find any location", Toast.LENGTH_SHORT).show();
             }
@@ -172,16 +181,42 @@ public class TweetLocatorFragment extends SupportMapFragment {
         }
     }
 
-    public void loadTweetsFromDB() {
-        TweetDAO dao = new TweetDAO();
-        List<Tweet> tweets = dao.query();
-        if (tweets != null && tweets.size() > 0) {
-            Tweet firstTweet = tweets.get(0);
-            // Center the map using first tweet
-            // TODO: Maybe It's a good idea to get the tweets from our current location
+    private class LoadTweetsFromDBAsyncTask extends AsyncTask<Void, Void, List<Tweet>> {
 
-            MapHelper.centerMap(map, firstTweet.getLat(), firstTweet.getLng());
-            MapHelper.addGeoTweetsToMap(tweets, map, getContext());
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<Tweet> doInBackground(Void... params) {
+            TweetDAO dao = new TweetDAO();
+            List<Tweet> tweets = dao.query();
+            return tweets;
+        }
+
+        @Override
+        protected void onPostExecute(List<Tweet> tweets) {
+            super.onPostExecute(tweets);
+            if (tweets != null && tweets.size() > 0) {
+                Tweet firstTweet = tweets.get(0);
+                // Center the map using first tweet
+                // TODO: Maybe It's a good idea to get the tweets from our current location
+
+                MapHelper.centerMap(map, firstTweet.getLat(), firstTweet.getLng());
+                MapHelper.addGeoTweetsToMap(tweets, map, getContext());
+            }
         }
     }
+
+    public void showProgressBar() {
+        menuItemSearch.setVisible(false);
+        menuItemActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        menuItemSearch.setVisible(true);
+        menuItemActionProgressItem.setVisible(false);
+    }
+
 }
