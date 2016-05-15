@@ -1,6 +1,7 @@
 package net.carlosdominguez.tweetslocatorkc.services.external;
 
 
+import java.util.List;
 import java.util.Map;
 
 import twitter4j.AccountSettings;
@@ -37,8 +38,12 @@ public class TwitterListenerHelper {
 
 
     private TwitterListener listener;
+    private TweetsLocatorListener locatorListener;
 
 
+    public TwitterListenerHelper(TweetsLocatorListener locatorListener) {
+        this.locatorListener = locatorListener;
+    }
 
     public TwitterListener getListener() {
         if (listener == null) {
@@ -100,7 +105,7 @@ public class TwitterListenerHelper {
 
                 @Override
                 public void searched(QueryResult queryResult) {
-
+                    locatorListener.searchLocationFinished(queryResult.getTweets());
                 }
 
                 @Override
@@ -518,8 +523,8 @@ public class TwitterListenerHelper {
     }
 
 
-    public interface TweetsLocatorInterface {
-
+    public interface TweetsLocatorListener {
+        void searchLocationFinished(List<Status> statuses);
     }
 
 }

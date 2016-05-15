@@ -22,10 +22,6 @@ public class MainActivity extends AppCompatActivity  {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    TwitterService service;
-    AsyncTwitter twitter;
-    TwitterListenerHelper twitterListenerHelper;
-    Geocoder geoCoder;
 
 
 
@@ -33,37 +29,6 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        twitterListenerHelper = new TwitterListenerHelper();
-        service = new TwitterService();
-        twitter = service.getAsyncTwitter();
-        twitter.addListener(twitterListenerHelper.getListener());
-        geoCoder = new Geocoder(this, Locale.getDefault());
     }
 
-
-    private void searchForLocation(String locationName) {
-        if (Geocoder.isPresent()) {
-            try {
-                List<Address> addressList = geoCoder.getFromLocationName(locationName, 1);
-                if (addressList != null && addressList.size() > 0) {
-                    Address address = addressList.get(0);
-                    if (address.hasLatitude() && address.hasLongitude()) {
-                        double selectedLat = address.getLatitude();
-                        double selectedLng = address.getLongitude();
-                        GeoLocation geo = new GeoLocation(selectedLat, selectedLng);
-                        Query query = new Query();
-                        query.geoCode(geo, 5, "km");
-                        twitter.search(query);
-                    }
-                }
-            }
-            catch (IOException e) {
-                Toast.makeText(this, "Opps! Error searching for a location name", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else {
-            Toast.makeText(this, "Opps! Geocoder is not available", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

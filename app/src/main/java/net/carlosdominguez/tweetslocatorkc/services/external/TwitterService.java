@@ -16,6 +16,14 @@ public class TwitterService {
         return new AccessToken(TwitterServiceConstants.ACCESS_TOKEN, TwitterServiceConstants.ACCESS_TOKEN_SECRET);
     }
 
+    public Twitter getTwitter() {
+        TwitterFactory factory = new TwitterFactory();
+        Twitter twitter = factory.getInstance();
+        twitter.setOAuthConsumer(TwitterServiceConstants.CONSUMER_KEY, TwitterServiceConstants.CONSUMER_SECRET);
+        twitter.setOAuthAccessToken(loadAccessToken());
+        return twitter;
+    }
+
     public AsyncTwitter getAsyncTwitter() {
         AsyncTwitterFactory factory = new AsyncTwitterFactory();
         AsyncTwitter asyncTwitter = factory.getInstance();
