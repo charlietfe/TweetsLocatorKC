@@ -19,30 +19,17 @@ public class Tweet {
     private String username;
     private String text;
     private String profileImageURL;
+    private Date publicationDate;
     private double lat;
     private double lng;
 
-    public double getLat() {
-        return lat;
+
+    public Tweet() {
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
-
-    public Tweet() {}
-
-    public Tweet(String username, String message) {
+    public Tweet(String username, String text) {
         this.username = username;
-        this.text = message;
+        this.text = text;
     }
 
 
@@ -78,7 +65,21 @@ public class Tweet {
         this.publicationDate = publicationDate;
     }
 
-    private Date publicationDate;
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
 
 
     public String getProfileImageURL() {

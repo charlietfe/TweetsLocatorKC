@@ -6,6 +6,7 @@ import net.carlosdominguez.tweetslocatorkc.model.db.DBHelper;
 import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
 import net.carlosdominguez.tweetslocatorkc.model.db.dao.TweetDAO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class TweetDAOTests extends AndroidTestCase {
         Tweet tweet = new Tweet();
         tweet.setText("Hi from tweet");
         tweet.setUsername("atlanticasound");
+        tweet.setPublicationDate(new Date());
 
         TweetDAO dao = new TweetDAO();
         dao.deleteAll();
@@ -48,6 +50,7 @@ public class TweetDAOTests extends AndroidTestCase {
         Tweet tweet = new Tweet();
         tweet.setText("Hi from tweet");
         tweet.setUsername("atlanticasound");
+        tweet.setPublicationDate(new Date());
 
         TweetDAO dao = new TweetDAO();
         dao.deleteAll();

@@ -8,6 +8,7 @@ import net.carlosdominguez.tweetslocatorkc.model.db.DBHelper;
 import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +22,13 @@ public class TweetDAO {
 
     public TweetDAO() {
         db = DBHelper.getInstance();
+    }
+
+
+    public void insertTweets(List<Tweet>tweets) {
+        for (Tweet tweet: tweets) {
+            insert(tweet);
+        }
     }
 
     public long insert(Tweet tweet) {
@@ -58,10 +66,14 @@ public class TweetDAO {
         delete(INVALID_ID_DELETE_ALL_RECORDS);
     }
 
-    public static ContentValues getContentValues(Tweet tweet) {
+    public  ContentValues getContentValues(Tweet tweet) {
         ContentValues content = new ContentValues();
-        content.put(DBConstants.KEY_COLUMN_MESSAGE, tweet.getText());
+        content.put(DBConstants.KEY_COLUMN_TEXT, tweet.getText());
         content.put(DBConstants.KEY_COLUMN_USERNAME, tweet.getUsername());
+        content.put(DBConstants.KEY_COLUMN_LAT, tweet.getLat());
+        content.put(DBConstants.KEY_COLUMN_LNG, tweet.getLng());
+        content.put(DBConstants.KEY_COLUMN_PROFILE_IMAGE_URL, tweet.getProfileImageURL());
+        content.put(DBConstants.KEY_COLUMN_PUBLICATION_DATE, dateToLong(tweet.getPublicationDate()));
 
         return content;
     }
@@ -73,14 +85,18 @@ public class TweetDAO {
         assert c != null;
 
         String username = c.getString(c.getColumnIndex(DBConstants.KEY_COLUMN_USERNAME));
-        String message = c.getString(c.getColumnIndex(DBConstants.KEY_COLUMN_MESSAGE));
+        String text = c.getString(c.getColumnIndex(DBConstants.KEY_COLUMN_TEXT));
 
         long id = c.getLong(c.getColumnIndex(DBConstants.KEY_COLUMN_ID));
 
-        Tweet Tweet = new Tweet(username, message);
-        Tweet.setId(id);
+        Tweet tweet = new Tweet(username, text);
+        tweet.setId(id);
+        tweet.setLng(c.getDouble(c.getColumnIndex(DBConstants.KEY_COLUMN_LNG)));
+        tweet.setLat(c.getDouble(c.getColumnIndex(DBConstants.KEY_COLUMN_LAT)));
+        tweet.setProfileImageURL(c.getString(c.getColumnIndex(DBConstants.KEY_COLUMN_PROFILE_IMAGE_URL)));
+        tweet.setPublicationDate(longToDate(c.getLong(c.getColumnIndex(DBConstants.KEY_COLUMN_PUBLICATION_DATE))));
 
-        return Tweet;
+        return tweet;
     }
 
 
@@ -129,6 +145,15 @@ public class TweetDAO {
         return Tweet;
     }
 
+
+    public static long dateToLong (Date date) {
+        return date.getTime();
+    }
+
+
+    public static Date longToDate (long longDate) {
+        return new Date(longDate);
+    }
 
 
 

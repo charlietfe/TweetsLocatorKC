@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import net.carlosdominguez.tweetslocatorkc.R;
 import net.carlosdominguez.tweetslocatorkc.model.db.Tweet;
+import net.carlosdominguez.tweetslocatorkc.model.db.dao.TweetDAO;
 import net.carlosdominguez.tweetslocatorkc.services.external.TwitterService;
 import net.carlosdominguez.tweetslocatorkc.utils.map.MapHelper;
 
@@ -60,6 +61,7 @@ public class TweetLocatorFragment extends SupportMapFragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
+                loadTweetsFromDB();
             }
         });
     }
@@ -158,9 +160,28 @@ public class TweetLocatorFragment extends SupportMapFragment {
             }
             else {
                 List<Tweet> tweets = Tweet.tweetsFromStatuses(statuses, selectedLat, selectedLng);
+
+                // We always clean the database and insert the new tweets
+                TweetDAO dao = new TweetDAO();
+                dao.deleteAll();
+                dao.insertTweets(tweets);
+
                 MapHelper.centerMap(map, selectedLat, selectedLng);
                 MapHelper.addGeoTweetsToMap(tweets, map, getContext());
             }
+        }
+    }
+
+    public void loadTweetsFromDB() {
+        TweetDAO dao = new TweetDAO();
+        List<Tweet> tweets = dao.query();
+        if (tweets != null && tweets.size() > 0) {
+            Tweet firstTweet = tweets.get(0);
+            // Center the map using first tweet
+            // TODO: Maybe It's a good idea to get the tweets from our current location
+
+            MapHelper.centerMap(map, firstTweet.getLat(), firstTweet.getLng());
+            MapHelper.addGeoTweetsToMap(tweets, map, getContext());
         }
     }
 }
